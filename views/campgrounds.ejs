@@ -1,0 +1,41 @@
+
+<%- include('layouts/header'); %>
+
+<div class="container pt-4">
+
+        <div class="jumbotron">
+            <div class="container">
+                <h1 class="display-3">Welcome to YelpCamp!</h1>
+                <p class="lead">pick any campground all over the world!</p>
+                <hr class="my-2">
+                <p>More info</p>
+                <p class="lead">
+                    <a class="btn btn-primary btn-lg" href="/campgrounds/new" role="button">Add new Campground</a>
+                </p>
+            </div>
+        </div>
+
+
+    <div class="row text-center" style="display:flex;flex-wrap: wrap;">
+        <div class="col-lg-12">
+            <h3>The most popular campgrounds!</h3>
+        </div>
+
+
+        <% if(campgrounds){ %> 
+            <% campgrounds.forEach(campground => { %>
+                <div class="col-md-3 col-sm-6">
+                    <div class="card">
+                        <img src="<%= campground['image'] %>" class="img-thumbnail" alt="#">
+                    </div>
+                    <h5 class="card-title"><%= campground['name'];%></h5>
+                </div>
+            <% }) %>
+        <% } %> 
+    </div>
+
+
+
+
+</div>
+<%- include('layouts/footer'); %>
