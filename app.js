@@ -2,12 +2,19 @@ const express = require('express');
 const app = express();
 var bodyParser = require('body-parser')
 const mongoose = require('mongoose');
+const passport = require('passport');
+const LocalStrategy = require('passport-local');
+
+// models 
+const user = require('./models/user');
+
+
 const port = 3000;
 
 //importing Models
 var Campground = require("./models/Campground"),
     Comment = require("./models/Comment"),
-    User = require("./models/User"),
+    User = require("./models/user"),
     seedDB = require('./seeds');
 
 app.use(bodyParser.urlencoded({
