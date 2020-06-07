@@ -29,6 +29,8 @@
                         <img src="<%= campground['image'] %>" class="img-thumbnail" alt="#">
                     </div>
                     <h5 class="card-title"><%= campground['name'];%></h5>
+
+                    <a href="/campgrounds/<%= campground['_id'] %>" class="btn btn-primary">MORE INFO</a>
                 </div>
             <% }) %>
         <% } %> 
