@@ -33,6 +33,27 @@ mongoose.connect('mongodb://localhost:27017/yelpcamp', {
 
 
 
+//passport configuration
+app.use(require('express-session')({
+    secret: "HOLLLLLLAA from secret",
+    resave: false,
+    saveUninitialized: false
+})); // we required the express-session
+
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()))
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+
+// inject user information to every page
+app.use(function (req, res, next) {
+    res.locals.currentUser = req.user; 
+    next();
+});
+
+
 
 app.get('/', function (req, res) {
     res.render('landingPage');
@@ -40,13 +61,14 @@ app.get('/', function (req, res) {
 
 
 app.get('/campgrounds/new', function (req, res) {
+    isLoginIn(req, res);
     res.render('addCampground');
 });
 
 
+
 //get 
 app.get('/campgrounds', function (req, res) {
-
     Campground.find({}, function (error, campgrounds) {
         // first always check for an error.
         if (error) {
@@ -63,6 +85,7 @@ app.get('/campgrounds', function (req, res) {
 
 
 app.post('/campgrounds', function (req, res) {
+    isLoginIn(req, res);
     //receive a send parameters
     let name = req.body.name;
     let image = req.body.image;
@@ -99,6 +122,66 @@ app.get('/campgrounds/:id', function (req, res) {
 
 
 
+
+// =============================================
+// =            Auth Routes                    =
+
+app.get("/register", (req, res) => {
+    res.render("register");
+});
+
+
+app.post('/register', (req, res) => {
+    let newUser = new User({
+        username: req.body.username
+    });
+    User.register(newUser, req.body.password, function (err, createdUser) {
+        if (err) {
+            console.log(err);
+            res.redirect('/register');
+        }
+
+        // register logic here
+        passport.authenticate("local")(req, res, function () {
+            res.redirect('/campgrounds');
+        })
+
+    });
+});
+
+
+app.get('/login', (req, res) => {
+    res.render("login");
+});
+
+app.post('/login', passport.authenticate("local", {
+    successRedirect: "/campgrounds",
+    failureRedirect: "/login"
+}), (req, res) => {});
+
+
+app.get('/logout', function (req, res) {
+    req.logout();
+    res.redirect('/campgrounds');
+});
+
+
+
+function isLoginIn(req, res, next) {
+    // this is first way:
+    // if (req.user) {
+    //     next();
+    // } else {
+    //     res.redirect('/login');
+    // }
+
+    // second way also:
+    if (req.isAuthenticated()) {
+        return next;
+    } else {
+        res.redirect('/login');
+    }
+}
 
 
 // server 
